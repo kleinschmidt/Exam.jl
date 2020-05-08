@@ -8,14 +8,23 @@ struct Question
     id
 end
 
-function question(contents, responses, label)
+function question(contents, responses, label; detect_label=false)
+    matched = 0
     for elem in contents
         for node in PreOrderDFS(elem)
             if node isa HTMLText
+                m = match(r"([0-9]+)\. ", node.text)
+                if detect_label && m !== nothing
+                    label = m.captures[1]
+                    matched += 1
+                end
                 node.text = replace(node.text, r"[0-9]+\. " => "")
             end
         end
     end
+
+    detect_label && matched == 0 && @warn "Failed to detect label, using default ($label)"
+    matched > 1 && @warn "Multiple lables detected, using last one ($label)"
 
     Question(contents, responses, label, string(uuid4()))
 end

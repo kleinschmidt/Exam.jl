@@ -5,7 +5,7 @@ extract_ps(doc::HTMLDocument) = extract_ps(doc.root[2])
 extract_ps!(accum, elem::HTMLElement{:p}) = push!(accum, elem)
 extract_ps!(accum, elem::HTMLElement) = (foreach(x -> extract_ps!(accum, x), elem.children); accum)
 
-function parse(doc)
+function parse(doc; detect_labels=false)
     stack = []
     questions = Question[]
 
@@ -20,7 +20,15 @@ function parse(doc)
     for item in ps
         if is_response(item)
             if !isempty(stack)
-                push!(questions, question(copy(stack), [], "$(length(questions)+1)"))
+                push!(
+                    questions,
+                    question(
+                        copy(stack),
+                        [],
+                        "$(length(questions)+1)",
+                        detect_label = detect_labels
+                    )
+                )
                 empty!(stack)
                 response_counter = 'A'
             end
