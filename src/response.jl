@@ -27,7 +27,7 @@ function Base.replace!(r::Response, rep::Pair)
 end
 
 _isempty(x::HTMLText) = isempty(x.text)
-_isempty(x::HTMLElement) = isempty(x.children) || all(isempty(child) for child in x.children)
+_isempty(x::HTMLElement) = isempty(x.children) || all(_isempty(child) for child in x.children)
 
 function cleanup_strong!(elem::HTMLElement)
     if length(elem.children) == 1 && first(elem.children) isa HTMLElement{:strong}
