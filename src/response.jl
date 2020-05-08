@@ -28,14 +28,17 @@ end
 
 function response(elem::HTMLElement, label, correct=false)
     elem = deepcopy(elem)
-    if length(elem.children) == 1 && first(elem.children) isa HTMLElement{:strong}
-        elem.children = [elem.children[1].children[1]]
-    end
-
-    for node in PreOrderDFS(elem)
+    for node in PostOrderDFS(elem)
         if node isa HTMLText
             node.text = replace(node.text, r"[A-E]+\. ?" => "")
         end
+    end
+
+    # re-parse to get rid of any emtpy elements.  children[2] is <body>, children[1] is body contents
+    elem = parsehtml(string(elem)).root.children[2].children[1]
+    
+    if length(elem.children) == 1 && first(elem.children) isa HTMLElement{:strong}
+        elem.children = [elem.children[1].children[1]]
     end
 
     Response(elem, label, string(uuid4()), correct)
