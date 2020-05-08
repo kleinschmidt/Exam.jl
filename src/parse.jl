@@ -38,11 +38,11 @@ function parse(doc)
 
 end
 
-read_key(fn) = Dict(map(x -> Pair(split(x)...), readlines(fn)))
+read_key(fn) = OrderedDict(map(x -> Pair(split(x)...), readlines(fn)))
 
 rekey(r::Response, correct_lab) =
     Response(r.content, r.label, r.id, r.label == correct_lab)
-function rekey!(q::Question, key::Dict)
+function rekey!(q::Question, key::AbstractDict)
     if haskey(key, q.label)
         correct = key[q.label]
         any(isequal(correct), getfield.(q.responses, :label)) ||
@@ -52,7 +52,7 @@ function rekey!(q::Question, key::Dict)
         @warn "No entry found for question $(q.label)"
     end
 end    
-rekey!(qs::Vector{Question}, key::Dict) = (rekey!.(qs, Ref(key)); qs)
+rekey!(qs::Vector{Question}, key::AbstractDict) = (rekey!.(qs, Ref(key)); qs)
 
 function cleanup_noneall(q::Question)
     has_none = any(occursin.(r"none of the above"i, q.responses))

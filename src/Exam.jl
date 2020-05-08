@@ -5,7 +5,8 @@ using
     AbstractTrees,
     UUIDs,
     ZipFile,
-    LightXML
+    LightXML,
+    DataStructures
 
 include("response.jl")
 include("question.jl")
