@@ -17,6 +17,8 @@ function parse(doc; detect_labels=false)
     question_counter=0
     response_counter=0
 
+    question_labels = Set([])
+
     for item in ps
         if is_response(item)
             if !isempty(stack)
@@ -31,6 +33,10 @@ function parse(doc; detect_labels=false)
                 )
                 empty!(stack)
                 response_counter = 'A'
+
+                lab = last(questions).label
+                lab ∈ question_labels && @warn "Duplicate label detected: $lab"
+                push!(question_labels, lab)
             end
 
             r = response(item, string(response_counter))
