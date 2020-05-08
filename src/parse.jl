@@ -5,7 +5,7 @@ extract_ps(doc::HTMLDocument) = extract_ps(doc.root[2])
 extract_ps!(accum, elem::HTMLElement{:p}) = push!(accum, elem)
 extract_ps!(accum, elem::HTMLElement) = (foreach(x -> extract_ps!(accum, x), elem.children); accum)
 
-function parse(doc; detect_labels=false)
+function parse(doc; detect_labels=true)
     stack = []
     questions = Question[]
 
